@@ -1,0 +1,57 @@
+{
+  "name": "postgres-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "database.hostname": "db_connectot-old-db-1",
+    "database.port": "5432",
+    "database.user": "postgres",
+    "database.password": "postgres",
+    "database.dbname": "olddb",
+    "database.server.name": "postgres-server",
+    "table.include.list": "public.users",
+    "topic.prefix": "your_topic_prefix",
+    "database.history.kafka.bootstrap.servers": "kafka:9092",
+    "database.history.kafka.topic": "schema-changes.users"
+  }
+}
+
+
+
+curl -X POST \ \
+http://localhost:8083/connectors \
+-H 'Content-Type: application/json' \
+-d '{
+"name": "jdbc-sink-newdb",
+"config": {
+"connector.class": "io.debezium.connector.jdbc.JdbcSinkConnector",
+"tasks.max": "1",
+"topics": "your_kafka_topic",
+"connection.url": "jdbc:postgresql://new-db:5433/newdb",
+"connection.user": "postgres",
+"connection.password": "postgres",
+"auto.create": "true",
+"insert.mode": "upsert",
+"pk.mode": "record_key",
+"pk.fields": "your_primary_key_field"
+}
+}'
+
+curl -X POST \
+http://localhost:8083/connectors \
+-H 'Content-Type: application/json' \
+-d '{
+"name": "jdbc-sink-newdb",
+"config": {
+"connector.class": "io.debezium.connector.jdbc.JdbcSinkConnector",
+"tasks.max": "1",
+"topics": "your_kafka_topic",
+"connection.url": "jdbc:postgresql://new-db:5433/newdb",
+"connection.user": "postgres",
+"connection.password": "postgres",
+"auto.create": "true",
+"insert.mode": "upsert",
+"pk.mode": "record_key",
+"pk.fields": "your_primary_key_field"
+}
+}'
